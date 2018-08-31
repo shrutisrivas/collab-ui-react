@@ -10,7 +10,6 @@ import {
   chain,
   find,
   trimEnd,
-  trimStart,
   uniqueId
 } from 'lodash';
 import iconPaths from '@collab-ui/icons/data/iconsData.json';
@@ -120,7 +119,7 @@ class Icon extends React.PureComponent {
 
     const getPaths = () => {
       const iconName = name.startsWith('icon-')
-        ? trimStart(name, 'icon-')
+        ? name.replace(/^(icon-)/,'')
         : name;
 
       return iconPaths[iconName]

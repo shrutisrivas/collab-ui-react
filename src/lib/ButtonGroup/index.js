@@ -136,7 +136,6 @@ class ButtonGroup extends React.Component {
       },
       []
     );
-
     !isNaN(newIndex[0]) && this.setFocusIndex(newIndex[0]);
   };
 
@@ -179,17 +178,30 @@ class ButtonGroup extends React.Component {
   };
 
   render() {
-    const { children, ariaLabel, className, type, highlightSelected, justified } = this.props;
+    const {
+      ariaLabel,
+      children,
+      className,
+      highlightSelected,
+      justified,
+      pillWidth,
+      theme,
+      type,
+     } = this.props;
     const { activeIndex } = this.state;
 
     const setButtons = () =>
+
       React.Children.map(children, (child, idx) => {
         return React.cloneElement(child, {
-          active: highlightSelected && activeIndex === idx,
+          active: type === 'pill' ? false : highlightSelected && activeIndex === idx,
           index: idx,
           className: child.props.children.type && child.props.children.type.displayName === 'Icon'
             ? 'cui-button--icon-group'
             : '',
+          style: {
+            ...pillWidth && {width: pillWidth},
+          }
         });
       });
 
@@ -197,8 +209,9 @@ class ButtonGroup extends React.Component {
       <div
         className={
           'cui-button-group' +
-          `${(type && ` cui-button-group--${type}`) || ''}` +
+          `${(theme && ` cui-button-group--${theme}`) || ''}` +
           `${(justified && ` cui-button-group--justified`) || ''}` +
+          `${(type && ` cui-button-group--${type}` || '')}` +
           `${(className && ` ${className}`) || ''}`
         }
         role="group"
@@ -211,27 +224,31 @@ class ButtonGroup extends React.Component {
 }
 
 ButtonGroup.propTypes = {
-  children: PropTypes.node,
-  onSelect: PropTypes.func,
+  activeIndex: PropTypes.number,
   ariaLabel: PropTypes.string,
+  children: PropTypes.node,
   className: PropTypes.string,
-  type: PropTypes.oneOf(['', 'dark']),
+  focusOnLoad: PropTypes.bool,
   highlightSelected: PropTypes.bool,
   justified: PropTypes.bool,
-  activeIndex: PropTypes.number,
-  focusOnLoad: PropTypes.bool,
+  onSelect: PropTypes.func,
+  pillWidth: PropTypes.string,
+  theme: PropTypes.oneOf(['', 'dark']),
+  type: PropTypes.oneOf(['', 'pill']),
 };
 
 ButtonGroup.defaultProps = {
-  children: null,
-  onSelect: null,
+  activeIndex: null,
   ariaLabel: '',
+  children: null,
   className: '',
-  type: '',
+  focusOnLoad: false,
   highlightSelected: true,
   justified: true,
-  activeIndex: null,
-  focusOnLoad: false,
+  pillWidth: '60px',
+  onSelect: null,
+  theme: '',
+  type:'',
 };
 
 export default ButtonGroup;
@@ -279,7 +296,7 @@ export default ButtonGroup;
   render() {
     return(
     <div className='columns large' style={{background: 'black', padding: '20px'}}>
-      <ButtonGroup type="dark">
+      <ButtonGroup theme="dark">
         <Button ariaLabel='Spaces'>Spaces</Button>
         <Button ariaLabel='Messages'>Messages</Button>
       </ButtonGroup>
@@ -331,11 +348,24 @@ export default ButtonGroup;
 
   render() {
     return(
-    <div className='columns small-3'>
-      <ButtonGroup>
-        <Button ariaLabel='left'><Icon name='icon-arrow-left_12' /></Button>
-        <Button ariaLabel='right'><Icon name='icon-arrow-right_12' /></Button>
-      </ButtonGroup>
+    <div>
+      <div className='columns small-4'>
+        <ButtonGroup>
+          <Button ariaLabel='left'><Icon name='icon-arrow-left_12' /></Button>
+          <Button ariaLabel='right'><Icon name='icon-arrow-right_12' /></Button>
+        </ButtonGroup>
+      </div>
+      <div className='columns small-4'>
+        <ButtonGroup type='pill'>
+          <Button ariaLabel='left'><Icon name='icon-flag_16' /></Button>
+          <Button ariaLabel='right'><Icon name='icon-cancel_16' /></Button>
+        </ButtonGroup>
+      </div>
+      <div className='columns small-4'>
+        <ButtonGroup type='pill' pillWidth='60px'>
+          <Button ariaLabel='left'><Icon name='icon-flag_16' /></Button>
+        </ButtonGroup>
+      </div>
     </div>
     );
   }
